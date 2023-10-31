@@ -1,0 +1,147 @@
+Q1.
+
+CREATE TABLE GameTable (
+    marketplace STRING,
+    customer_id STRING,
+    review_id STRING,
+    product_id STRING,
+    product_parent STRING,
+    product_title STRING,
+    product_category STRING,
+    star_rating INT,
+    helpful_votes INT,
+    total_votes INT,
+    vine STRING,
+    verified_purchase STRING,
+    review_headline STRING,
+    review_body STRING,
+    review_date STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+LOAD DATA INPATH 'HiveInput/amazon_reviews_us_Digital_Video_Games_v1_00.tsv' INTO TABLE GameTable;
+
+
+SELECT
+    marketplace,
+    product_category,
+    COUNT(review_id) AS total_review_count,
+    AVG(star_rating) AS average_star_rating
+FROM GameTable
+WHERE marketplace NOT LIKE 'US'
+GROUP BY marketplace, product_category;
+
+-----------------------------------------------------------------------------------
+
+Q2. 
+
+CREATE TABLE GameTablePart (
+    marketplace STRING,
+    customer_id STRING,
+    review_id STRING,
+    product_id STRING,
+    product_parent STRING,
+    product_title STRING,
+    product_category STRING,
+    helpful_votes INT,
+    total_votes INT,
+    vine STRING,
+    verified_purchase STRING,
+    review_headline STRING,
+    review_body STRING,
+    review_date STRING
+)
+PARTITIONED BY (star_rating INT)
+STORED AS ORC;
+
+
+INSERT OVERWRITE TABLE GameTablePart PARTITION (star_rating=1)
+SELECT 
+    marketplace, customer_id, review_id, product_id, product_parent, product_title, product_category,
+    helpful_votes, total_votes, vine, verified_purchase, review_headline, review_body, review_date
+FROM GameTable
+WHERE star_rating = 1;
+
+
+INSERT OVERWRITE TABLE GameTablePart PARTITION (star_rating=2)
+SELECT 
+    marketplace, customer_id, review_id, product_id, product_parent, product_title, product_category,
+    helpful_votes, total_votes, vine, verified_purchase, review_headline, review_body, review_date
+FROM GameTable
+WHERE star_rating = 2;
+
+SELECT star_rating,
+       SUM(helpful_votes) AS sum_helpful_votes,
+       SUM(total_votes) AS sum_total_votes
+FROM GameTablePart
+WHERE star_rating IN (1, 2) 
+GROUP BY star_rating
+ORDER BY sum_total_votes DESC;
+
+-----------------------------------------------------------------------------------------------------
+
+Q3.
+
+CREATE TABLE GameTableBuck (
+    marketplace STRING,
+    customer_id STRING,
+    review_id STRING,
+    product_id STRING,
+    product_parent STRING,
+    product_title STRING,
+    product_category STRING,
+    star_rating INT,
+    helpful_votes INT,
+    total_votes INT,
+    vine STRING,
+    verified_purchase STRING,
+    review_headline STRING,
+    review_body STRING,
+    review_date STRING
+)
+CLUSTERED BY (review_date) INTO 3 BUCKETS
+STORED AS ORC;
+
+
+-- Load data from 'GameTable' into 'GameTableBuck' with bucketing
+FROM GameTable
+INSERT OVERWRITE TABLE GameTableBuck
+SELECT
+    marketplace,
+    customer_id,
+    review_id,
+    product_id,
+    product_parent,
+    product_title,
+    product_category,
+    star_rating,
+    helpful_votes,
+    total_votes,
+    vine,
+    verified_purchase,
+    review_headline,
+    review_body,
+    review_date;
+
+
+-- Find the minimum and maximum 'review_date' for each bucket
+SELECT
+    GameTableBuck,
+    MIN(review_date) AS min_review_date,
+    MAX(review_date) AS max_review_date
+FROM (
+    SELECT
+        review_date,
+        BUCKET(review_date, 3) AS bucket
+    FROM GameTableBuck
+) subquery
+GROUP BY bucket;
+
+
+
+
+
+
