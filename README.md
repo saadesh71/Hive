@@ -1,6 +1,8 @@
 # Hive
-# Dataset - https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1RA5B6SXSFMmL_908W8Tmqz6BWH3E2ANC%2Fview%3Fusp%3Dshare_link&data=05%7C01%7Cecmhzg%40mst.edu%7C319a06c3da6e4fd5d12e08dbd26096cc%7Ce3fefdbef7e9401ba51a355e01b05a89%7C0%7C0%7C638335084520843293%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=MlKIutzj2JZgQ61oj%2FWsF7LOKTutnUkj60VNoxnT1%2BA%3D&reserved=0
-# Steps - Insert dataset to hdfs before executing the code use hadoop fs -mkdir, copyFromLocal
+
+Dataset - https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1RA5B6SXSFMmL_908W8Tmqz6BWH3E2ANC%2Fview%3Fusp%3Dshare_link&data=05%7C01%7Cecmhzg%40mst.edu%7C319a06c3da6e4fd5d12e08dbd26096cc%7Ce3fefdbef7e9401ba51a355e01b05a89%7C0%7C0%7C638335084520843293%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=MlKIutzj2JZgQ61oj%2FWsF7LOKTutnUkj60VNoxnT1%2BA%3D&reserved=0
+
+Steps - Insert dataset to hdfs before executing the code use hadoop fs -mkdir, copyFromLocal
           
 Part 1:
 - Download the dataset and insert into a table named 'GameTable'. Based on
